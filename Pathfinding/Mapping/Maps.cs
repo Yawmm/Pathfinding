@@ -100,10 +100,12 @@ public static class Maps
     private static void ValidateInput(IReadOnlyCollection<string> lines, CharacterSettings settings)
     {
         var text = string.Join("\r\n", lines);
-        
+
         // Example regex with '30' as length and character options as '-|S|E|#':
         // (?:(?:(-|S|#|E)\s){29}(-|S|#|E)((\r\n)|$)){30}
-        var charOptions = $"{settings.EmptyKey}|{settings.StartKey}|{settings.EndKey}|{settings.BlockedKey}";
+        string Escape (char ch) => Regex.Escape(ch.ToString());
+
+        var charOptions = $@"{Escape(settings.EmptyKey)}|{Escape(settings.StartKey)}|{Escape(settings.EndKey)}|{Escape(settings.BlockedKey)}";
         var pattern = $"(?:(?:({charOptions})\\s){{{lines.Count - 1}}}({charOptions})((\\r\\n)|$)){{{lines.Count}}}";
 
         if (!Regex.IsMatch(text, pattern))
